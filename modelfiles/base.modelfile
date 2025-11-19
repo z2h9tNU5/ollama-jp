@@ -1,0 +1,2 @@
+FROM {{BASE_MODEL}}
+PARAMETER temperature 0.2

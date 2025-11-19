@@ -1,0 +1,4 @@
+FROM {{BASE_MODEL}}
+
+SYSTEM @../prompts/system_jp.txt
+PARAMETER temperature 0.2

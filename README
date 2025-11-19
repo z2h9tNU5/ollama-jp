@@ -1,0 +1,18 @@
+# ビルド方法
+
+## 日本語モデル
+```
+docker build \
+  --build-arg MODEL_NAME=ollama-qwen-jp \
+  --build-arg BASE_MODEL=qwen2.5-coder \
+  --build-arg ENABLE_JP=true \
+  -t ollama-qwen-jp .
+```
+
+起動
+```
+docker run -d \
+  --name ollama-qwen-jp \
+  -p 11434:11434 \
+  ollama-qwen-jp
+```
