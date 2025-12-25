@@ -75,12 +75,15 @@ jobs:
 
           if [ "$JP" = "on" ]; then
             JP_TAG="-jp"
+            ENABLE_JP="true"
           else
             JP_TAG=""
+            ENABLE_JP="false"
           fi
 
           TAG="${IMAGE}:${MODEL}-${SIZE}${JP_TAG}-${VERSION}"
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "enable_jp=${ENABLE_JP}" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
@@ -92,6 +95,6 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             MODEL_NAME=${{ matrix.target.model }}
-            MODEL_SIZE=${{ matrix.target.size }}
-            JP_FLAG=${{ matrix.jp }}
+            BASE_MODEL=${{ matrix.target.model }}:${{ matrix.target.size }}
+            ENABLE_JP=${{ steps.meta.outputs.enable_jp }}
             VERSION=${{ steps.version.outputs.version }}
