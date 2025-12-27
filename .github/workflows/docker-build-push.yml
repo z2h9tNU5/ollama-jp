@@ -23,10 +23,6 @@ jobs:
             size: 1.5b
           - model: qwen2.5-coder
             size: 3b
-          - model: codellama
-            size: 7b
-          - model: llama3.2
-            size: 3b
           - model: phi3
             size: 3.8b
         jp: [on, off]
