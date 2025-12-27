@@ -7,14 +7,13 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/llm-models
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write   # ← GHCR push に必須
+      packages: write   # GHCR push に必須
 
     strategy:
       fail-fast: false
@@ -40,7 +39,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # GHCR ログイン（PAT 不要）
+      # GHCR ログイン（PAT不要）
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
@@ -55,7 +54,10 @@ jobs:
           SIZE="${{ matrix.target.size }}"
           JP="${{ matrix.jp }}"
           VERSION="${{ steps.version.outputs.version }}"
-          IMAGE="${{ env.IMAGE_NAME }}"
+
+          # GHCR は owner / image 名が lowercase 必須
+          OWNER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          IMAGE="ghcr.io/${OWNER}/llm-models"
 
           if [ "$JP" = "on" ]; then
             JP_TAG="-jp"
@@ -70,16 +72,4 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "enable_jp=${ENABLE_JP}" >> $GITHUB_OUTPUT
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tag }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            MODEL_NAME=${{ matrix.target.model }}
-            BASE_MODEL=${{ matrix.target.model }}:${{ matrix.target.size }}
-            ENABLE_JP=${{ steps.meta.outputs.enable_jp }}
-            VERSION=${{ steps.version.outputs.version }}
+      - name: Build and Pu
